@@ -1,66 +1,114 @@
-import { Component, OnInit, AfterViewChecked } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../../service/auth.service';
-import { ProductService } from '../../service/product.service';
-import { CartService } from '../../service/cart.service';
-import { Cart } from '../cart/cart';
+import {
+  Component,
+  OnInit,
+  AfterViewChecked
+} from '@angular/core';
+
+import {
+  Router,
+  RouterModule
+} from '@angular/router';
+
+import {
+  CommonModule
+} from '@angular/common';
+
+import {
+  FormsModule
+} from '@angular/forms';
+
+import {
+  AuthService
+} from '../../service/auth.service';
+
+import {
+  ProductService
+} from '../../service/product.service';
+
+import {
+  CartService
+} from '../../service/cart.service';
+
+import { Cart }
+from '../cart/cart';
 
 declare const lucide: any;
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-imports: [
-  RouterModule,
-  CommonModule,
-  Cart
-],  templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+
+  imports: [
+    RouterModule,
+    CommonModule,
+    FormsModule,
+    Cart
+  ],
+
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.css'
 })
-export class Navbar implements OnInit, AfterViewChecked {
+export class Navbar
+implements OnInit, AfterViewChecked {
 
   showLogoutModal = false;
   closing = false;
   showMenu = false;
+  showCart = false;
+
   activeCategory = '';
 
-toastMessage: string | null = null;
-toastTimeout: any;
+  toastMessage:
+    string | null = null;
 
-constructor(
-  public authService: AuthService,
-  private productService: ProductService,
-  public cartService: CartService
-) {
+  toastTimeout: any;
 
-  this.cartService.cartError$.subscribe(msg => {
+  search = '';
 
-    // limpa antes (evita travar UI)
-    this.toastMessage = null;
+  previewProdutos:
+    any[] = [];
 
-    if (!msg) return;
+  mostrarDropdown =
+    false;
 
-    this.toastMessage = msg;
+  constructor(
+    public authService:
+      AuthService,
 
-    clearTimeout(this.toastTimeout);
+    private productService:
+      ProductService,
 
-    this.toastTimeout = setTimeout(() => {
-      this.toastMessage = null;
-    }, 4000);
+    public cartService:
+      CartService,
 
-  });
+    private router:
+      Router
+  ) {
 
-}
+    this.cartService
+      .cartError$
+      .subscribe(msg => {
 
-fecharToast() {
-  this.toastMessage = null;
-  clearTimeout(this.toastTimeout);
-}
+      this.toastMessage =
+        null;
 
+      if (!msg) return;
 
-  onSearch(value: string) {
-    this.productService.setSearch(value);
+      this.toastMessage =
+        msg;
+
+      clearTimeout(
+        this.toastTimeout
+      );
+
+      this.toastTimeout =
+        setTimeout(() => {
+
+        this.toastMessage =
+          null;
+
+      }, 4000);
+    });
   }
 
   ngOnInit() {
@@ -72,43 +120,161 @@ fecharToast() {
   }
 
   initIcons() {
-    if (typeof lucide !== 'undefined') {
+
+    if (
+      typeof lucide
+      !== 'undefined'
+    ) {
+
       lucide.createIcons();
     }
   }
 
-  setActive(category: string) {
-    this.activeCategory = category;
+  
+
+  buscarPreview() {
+
+    if (
+      this.search
+      .trim()
+      .length < 3
+    ) {
+
+      this.previewProdutos =
+        [];
+
+      this.mostrarDropdown =
+        false;
+
+      return;
+    }
+
+    this.productService
+      .buscarPreview(
+        this.search
+      )
+      .subscribe({
+
+      next: (
+        res: any
+      ) => {
+
+        this.previewProdutos =
+          res.content
+            ?.slice(0, 5)
+          || [];
+
+        this.mostrarDropdown =
+          true;
+      },
+
+      error: err => {
+        console.error(err);
+      }
+    });
+  }
+
+  selecionarProduto(
+    item: any
+  ) {
+
+    this.search =
+      item.nomeProduto;
+
+    this.irParaPesquisa();
+  }
+
+  irParaPesquisa() {
+
+    if (
+      !this.search.trim()
+    ) {
+      return;
+    }
+
+    this.mostrarDropdown =
+      false;
+
+    this.router.navigate(
+      ['/pesquisa'],
+      {
+        queryParams: {
+          nomeProduto:
+            this.search
+        }
+      }
+    );
+  }
+
+  fecharToast() {
+
+    this.toastMessage =
+      null;
+
+    clearTimeout(
+      this.toastTimeout
+    );
+  }
+
+  setActive(
+    category: string
+  ) {
+
+    this.activeCategory =
+      category;
   }
 
   toggleMenu() {
-    this.showMenu = !this.showMenu;
-    setTimeout(() => this.initIcons(), 50);
+
+    this.showMenu =
+      !this.showMenu;
+
+    setTimeout(() => {
+
+      this.initIcons();
+
+    }, 50);
   }
 
   abrirLogout() {
-    this.showLogoutModal = true;
+    this.showLogoutModal =
+      true;
   }
 
   cancelarLogout() {
-    this.closing = true;
+
+    this.closing =
+      true;
+
     setTimeout(() => {
-      this.showLogoutModal = false;
-      this.closing = false;
+
+      this.showLogoutModal =
+        false;
+
+      this.closing =
+        false;
+
     }, 250);
   }
 
   confirmarLogout() {
-    this.closing = true;
+
+    this.closing =
+      true;
+
     setTimeout(() => {
-      this.authService.logout();
+
+      this.authService
+        .logout();
+
       location.href = '/';
+
     }, 250);
   }
-  showCart = false;
 
-abrirCarrinho() {
-  this.showCart = true;
-}
+  abrirCarrinho() {
+    this.showCart = true;
+  }
 
+  
 }

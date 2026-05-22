@@ -271,4 +271,18 @@ export class ProductService {
       `${this.API_PUBLICA}/categorias`
     );
   }
+
+  buscarPreview(nome: string) {
+
+  return this.http.get<any>(
+    `${environment.apiUrl}/estoque/relatorio`,
+    {
+      params: {
+        nomeProduto: nome,
+        page: 0,
+        size: 5
+      }
+    }
+  );
+}
 }

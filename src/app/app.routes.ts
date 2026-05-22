@@ -26,7 +26,7 @@ export const routes: Routes = [
   { path: 'cestar', component: CestaDeCompras, canActivate:[publicGuard]},
   { path: 'dados', component: DadoClientes, canActivate:[publicGuard]},
   { path: 'finalizar-pedido', component: FinalizarPedido, canActivate:[publicGuard]},
-
+  {path: 'pesquisa',loadComponent: () =>import('./page/TelaClientes/tela-de-pesquisar/tela-de-pesquisar').then(m => m.TelaDePesquisar)},
 
 
   { path: 'pedido', component: Pedidos, canActivate: [authGuard] },
