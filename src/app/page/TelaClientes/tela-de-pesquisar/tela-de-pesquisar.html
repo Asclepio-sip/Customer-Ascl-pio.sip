@@ -1,0 +1,157 @@
+<app-navbar></app-navbar>
+
+<div class="page">
+
+  <div class="header">
+
+    <h2>
+      Resultado para
+      "{{ filtro.nomeProduto }}"
+    </h2>
+
+    <span class="count">
+      {{ produtos.length }}
+      produtos encontrados
+    </span>
+
+  </div>
+
+  @if (loading) {
+
+    <div class="loading">
+      Carregando produtos...
+    </div>
+
+  }
+
+  <div class="grid">
+
+    @for (
+      item of produtos;
+      track item.id
+    ) {
+
+      <div class="product-card">
+
+        @if (
+          item.percentualDesconto > 0
+        ) {
+
+          <div class="discount-badge">
+
+            -{{
+              item.percentualDesconto
+            }}%
+
+          </div>
+
+        }
+
+        <div class="image-container">
+
+          <img
+            [src]="getImagem(item)"
+            [alt]="item.nomeProduto"
+            loading="lazy"
+          />
+
+        </div>
+
+        <h3 class="product-name">
+          {{ item.nomeProduto }}
+        </h3>
+
+        <small class="store-name">
+          {{ item.nomeLoja }}
+        </small>
+
+        <span class="stock">
+
+          Estoque:
+          {{ item.quantidade }}
+
+        </span>
+
+        <div class="price-box">
+
+          @if (
+            item.percentualDesconto > 0
+          ) {
+
+            <span class="old-price">
+
+              {{
+                item.preco
+                | currency:'BRL'
+              }}
+
+            </span>
+
+          }
+
+          <span class="current-price">
+
+            {{
+              (
+                item.valorFinal
+                || item.preco
+              )
+              | currency:'BRL'
+            }}
+
+          </span>
+
+        </div>
+
+        <button
+          class="add-btn"
+        >
+          +
+        </button>
+
+      </div>
+    }
+
+  </div>
+
+</div>
+
+@if (totalPaginas > 1) {
+
+  <div class="pagination">
+
+    <button
+      (click)="buscar(paginaAtual - 1)"
+      [disabled]="paginaAtual === 0"
+    >
+      ← Anterior
+    </button>
+
+    @for (
+      page of [].constructor(totalPaginas);
+      track $index
+    ) {
+
+      <button
+        [class.active]="
+          paginaAtual === $index
+        "
+        (click)="buscar($index)"
+      >
+        {{ $index + 1 }}
+      </button>
+
+    }
+
+    <button
+      (click)="buscar(paginaAtual + 1)"
+      [disabled]="
+        paginaAtual === totalPaginas - 1
+      "
+    >
+      Próxima →
+    </button>
+
+  </div>
+
+}
