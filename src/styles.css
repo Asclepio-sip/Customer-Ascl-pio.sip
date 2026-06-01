@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+* {
+  font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
+}
+
+/* =============================================================================
+   SISTEMA DE VARIÁVEIS GLOBAIS — FONTE ÚNICA DE VERDADE
+   Altere aqui para personalizar o tema inteiro do site.
+   Todos os componentes puxam daqui.
+============================================================================= */
+
+:root,
+[data-theme="light"] {
+  /* ── Cores de fundo ── */
+  --bg:                 #fafafa;
+  --surface:            #ffffff;
+  --surface-container:  #f8fafc;
+
+  /* ── Cores de texto ── */
+  --on-surface:         #0f172a;
+  --on-background:      #1e293b;
+  --on-surface-variant:  #64748b;
+
+  /* ── Cor principal (botões, links, destaques) ── */
+  --primary:            #e31918;
+  --on-primary:         #ffffff;
+
+  /* ── Cor secundária (super ofertas, badges) ── */
+  --secondary:          #066b5d;
+  --on-secondary:       #ffffff;
+
+  /* ── Bordas e divisores ── */
+  --outline-variant:    #e2e8f0;
+
+  /* ── Cores utilitárias ── */
+  --green-text:         #16a34a;
+  --badge-bg:           #93000a;
+  --badge-color:        #ffffff;
+
+  /* ── Sombras ── */
+  --shadow-sm:          0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md:          0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-lg:          0 8px 32px rgba(0, 0, 0, 0.1);
+
+  /* ── Tipografia ── */
+  --font-family:        'Plus Jakarta Sans', 'Poppins', sans-serif;
+  --font-size-xs:       11px;
+  --font-size-sm:       12px;
+  --font-size-base:     14px;
+  --font-size-md:       16px;
+  --font-size-lg:       18px;
+  --font-size-xl:       24px;
+  --font-size-2xl:      32px;
+  --font-size-3xl:      48px;
+
+  /* ── Espaçamento base ── */
+  --spacing-xs:         4px;
+  --spacing-sm:         8px;
+  --spacing-md:         16px;
+  --spacing-lg:         24px;
+  --spacing-xl:         32px;
+  --spacing-2xl:        48px;
+  --spacing-3xl:        64px;
+
+  /* ── Bordas arredondadas ── */
+  --radius-sm:          8px;
+  --radius-md:          12px;
+  --radius-lg:          16px;
+  --radius-xl:          24px;
+  --radius-full:        9999px;
+
+  /* ── Transição padrão ── */
+  --transition:         0.2s ease;
+
+  /* ── Layout ── */
+  --max-width:          1440px;
+}
+
+/* ===== DARK THEME ===== */
+[data-theme="dark"] {
+  --bg:                 #0e1110;
+  --surface:            #181d1b;
+  --surface-container:  #2c3130;
+
+  --on-surface:         #eaefec;
+  --on-background:      #eaefec;
+  --on-surface-variant:  #bdc9c5;
+
+  --primary:            #74d8c6;
+  --on-primary:         #003730;
+
+  --secondary:          #74d8c6;
+  --on-secondary:       #003730;
+
+  --outline-variant:    #3e4946;
+
+  --green-text:         #74d8c6;
+  --badge-bg:           #74d8c6;
+  --badge-color:        #003730;
+
+  --shadow-sm:          0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md:          0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg:          0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== BODY ===== */
+body {
+  background-color: var(--bg);
+  color: var(--on-background);
+  font-family: var(--font-family);
+  margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

@@ -1,0 +1,321 @@
+<nav class="navbar-promofarma">
+
+  <!-- TOPO -->
+  <div class="navbar-top">
+
+    <div class="container">
+
+      <!-- LOGO -->
+      <a class="logo" routerLink="/">
+        <i data-lucide="plus" class="icon-plus"></i>
+        <span class="logo-text">
+          PROMOFARMA
+        </span>
+      </a>
+
+      <!-- PESQUISA -->
+      <div class="search-wrapper">
+
+        <i
+          data-lucide="search"
+          class="search-icon"
+        ></i>
+
+        <input
+          type="text"
+          placeholder="Buscar medicamentos..."
+          [(ngModel)]="search"
+          (input)="buscarPreview()"
+          (keyup.enter)="irParaPesquisa()"
+        />
+
+        <button
+          class="search-btn"
+          (click)="irParaPesquisa()"
+        >
+          <i data-lucide="search"></i>
+        </button>
+
+        <!-- DROPDOWN -->
+        @if (mostrarDropdown) {
+
+          <div class="search-dropdown">
+
+            @for (
+              item of previewProdutos;
+              track item.produtoId
+            ) {
+
+              <div
+                class="dropdown-item"
+                (click)="selecionarProduto(item)"
+              >
+
+                <img
+                  [src]="
+                    item.imagemBase64
+                    ? item.imagemBase64
+                    : 'assets/sem-imagem.png'
+                  "
+                  alt=""
+                />
+
+                <div class="item-info">
+
+                  <strong>
+                    {{ item.nomeProduto }}
+                  </strong>
+
+                  <small>
+                    {{ item.nomeLoja }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            }
+
+            <button
+              class="ver-todos"
+              (click)="irParaPesquisa()"
+            >
+              Ver todos resultados
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+      <!-- AÇÕES -->
+      <div class="actions">
+
+        <!-- THEME TOGGLE -->
+        <button class="theme-toggle-btn" (click)="toggleTheme()" [attr.aria-label]="isDarkMode ? 'Modo claro' : 'Modo escuro'">
+          @if (isDarkMode) {
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          }
+        </button>
+
+        <!-- LOGIN -->
+        @if (!authService.isAuthenticated()) {
+
+          <a
+            routerLink="/login"
+            class="action-item"
+          >
+
+            <i data-lucide="user-circle"></i>
+
+            <div class="action-text">
+              <small>Bem-vindo!</small>
+              <strong>Administração</strong>
+            </div>
+
+          </a>
+
+        }
+
+        <!-- LOGADO -->
+        @if (authService.isAuthenticated()) {
+
+          <button
+            class="action-item"
+            (click)="abrirLogout()"
+          >
+
+            <i data-lucide="user-circle"></i>
+
+            <div class="action-text">
+              <small>
+                Olá,
+                {{ authService.getUserName() }}
+              </small>
+
+              <strong>
+                Sair
+              </strong>
+            </div>
+
+          </button>
+
+        }
+
+        <!-- CESTA -->
+        <div
+          class="action-item cart"
+          (click)="abrirCarrinho()"
+        >
+
+          <i data-lucide="shopping-cart"></i>
+
+          <div class="action-text">
+            <small>Cesta</small>
+            <strong>Produtos</strong>
+          </div>
+
+          @if (cartService.totalItens() > 0) {
+
+            <span class="badge" [class.bump]="badgeBump">
+              {{ cartService.totalItens() }}
+            </span>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- CATEGORIAS -->
+  <div class="navbar-bottom">
+
+    <div class="container">
+
+      <div class="categories">
+
+        <div
+          class="category"
+          [class.active]="activeCategory === 'local'"
+          (click)="setActive('local')"
+        >
+          <i data-lucide="map-pin"></i>
+          Onde estamos
+        </div>
+
+        <div
+          class="category"
+          [class.active]="activeCategory === 'medicamentos'"
+          (click)="setActive('medicamentos')"
+        >
+          <i data-lucide="pill"></i>
+          Medicamentos
+        </div>
+
+        <div
+          class="category"
+          [class.active]="activeCategory === 'beleza'"
+          (click)="setActive('beleza')"
+        >
+          <i data-lucide="sparkles"></i>
+          Beleza
+        </div>
+
+        <div
+          class="category"
+          [class.active]="activeCategory === 'higiene'"
+          (click)="setActive('higiene')"
+        >
+          <i data-lucide="droplet"></i>
+          Higiene
+        </div>
+
+        <div
+          class="category"
+          [class.active]="activeCategory === 'infantil'"
+          (click)="setActive('infantil')"
+        >
+          <i data-lucide="baby"></i>
+          Infantil
+        </div>
+
+        <div
+          class="category"
+          [class.active]="activeCategory === 'vitaminas'"
+          (click)="setActive('vitaminas')"
+        >
+          <i data-lucide="sun"></i>
+          Vitaminas
+        </div>
+
+        <button class="promo-btn">
+          <i data-lucide="flame"></i>
+          Produtos em Promoção
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</nav>
+
+<!-- CARRINHO -->
+@if (showCart) {
+  <app-cart
+    (close)="showCart = false"
+  ></app-cart>
+}
+
+<!-- MODAL LOGOUT -->
+@if (showLogoutModal) {
+
+  <div
+    class="modal-backdrop"
+    [class.closing]="closing"
+  >
+
+    <div class="modal">
+
+      <h5>
+        Confirmar saída
+      </h5>
+
+      <p>
+        Tem certeza que deseja sair
+        da administração?
+      </p>
+
+      <div class="modal-actions">
+
+        <button
+          class="btn-cancel"
+          (click)="cancelarLogout()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          class="btn-confirm"
+          (click)="confirmarLogout()"
+        >
+          Sair
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+<!-- TOAST POPUP -->
+@if (toastMessage) {
+  <div class="toast-overlay" (click)="fecharToast()"></div>
+  <div class="toast-popup">
+    <div class="toast-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <div class="toast-body">
+      <strong class="toast-title">Atenção</strong>
+      <p class="toast-text">{{ toastMessage }}</p>
+    </div>
+    <button class="toast-close" (click)="fecharToast()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="toast-progress"></div>
+  </div>
+}
