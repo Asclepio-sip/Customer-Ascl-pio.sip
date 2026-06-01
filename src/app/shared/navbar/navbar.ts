@@ -146,7 +146,7 @@ implements OnInit, AfterViewChecked {
     }
   }
 
-  
+
 
   buscarPreview() {
 
@@ -303,5 +303,5 @@ implements OnInit, AfterViewChecked {
     document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
   }
 
-  
+
 }
