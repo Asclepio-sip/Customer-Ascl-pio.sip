@@ -1,157 +1,247 @@
 <app-navbar></app-navbar>
 
-<div class="page">
+<main class="page-wrapper">
 
-  <div class="header">
-
-    <h2>
-      Resultado para
-      "{{ filtro.nomeProduto }}"
-    </h2>
-
-    <span class="count">
-      {{ produtos.length }}
-      produtos encontrados
-    </span>
-
-  </div>
-
-  @if (loading) {
-
-    <div class="loading">
-      Carregando produtos...
-    </div>
-
-  }
-
-  <div class="grid">
-
-    @for (
-      item of produtos;
-      track item.id
-    ) {
-
-      <div class="product-card">
-
-        @if (
-          item.percentualDesconto > 0
-        ) {
-
-          <div class="discount-badge">
-
-            -{{
-              item.percentualDesconto
-            }}%
-
-          </div>
-
-        }
-
-        <div class="image-container">
-
-          <img
-            [src]="getImagem(item)"
-            [alt]="item.nomeProduto"
-            loading="lazy"
-          />
-
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <div class="hero-content">
+      <nav class="breadcrumb">
+        <a routerLink="/">HOME</a>
+        <span class="sep">›</span>
+        <span>PESQUISA</span>
+        <span class="sep">›</span>
+        <span class="current">{{ filtro.nomeProduto | uppercase }}</span>
+      </nav>
+      <h1 class="hero-title">Resultado para<br><span class="accent">"{{ filtro.nomeProduto }}"</span></h1>
+      <div class="hero-meta">
+        <span class="product-count">{{ produtosFiltrados.length }} PRODUTOS</span>
+        <div class="sort-select">
+          <select [(ngModel)]="ordenacao" (change)="ordenar()">
+            <option value="relevancia">RELEVÂNCIA</option>
+            <option value="menor">MENOR PREÇO</option>
+            <option value="maior">MAIOR PREÇO</option>
+            <option value="nome">NOME A-Z</option>
+          </select>
         </div>
-
-        <h3 class="product-name">
-          {{ item.nomeProduto }}
-        </h3>
-
-        <small class="store-name">
-          {{ item.nomeLoja }}
-        </small>
-
-        <span class="stock">
-
-          Estoque:
-          {{ item.quantidade }}
-
-        </span>
-
-        <div class="price-box">
-
-          @if (
-            item.percentualDesconto > 0
-          ) {
-
-            <span class="old-price">
-
-              {{
-                item.preco
-                | currency:'BRL'
-              }}
-
-            </span>
-
-          }
-
-          <span class="current-price">
-
-            {{
-              (
-                item.valorFinal
-                || item.preco
-              )
-              | currency:'BRL'
-            }}
-
-          </span>
-
-        </div>
-
-        <button
-          class="add-btn"
-        >
-          +
-        </button>
-
       </div>
-    }
-
+    </div>
   </div>
 
-</div>
+  <!-- CONTENT: SIDEBAR + GRID -->
+  <div class="content-layout">
 
-@if (totalPaginas > 1) {
+    <!-- SIDEBAR -->
+    <aside class="sidebar-filters">
+      <h3 class="filter-title">FILTROS</h3>
 
-  <div class="pagination">
+      <!-- Filtro por nome do produto -->
+      <div class="filter-group">
+        <label class="filter-label">Produto</label>
+        <input
+          class="filter-input"
+          type="text"
+          placeholder="Nome do produto..."
+          [(ngModel)]="filtro.nomeProduto"
+          (keyup.enter)="aplicarFiltros()"
+        />
+      </div>
 
-    <button
-      (click)="buscar(paginaAtual - 1)"
-      [disabled]="paginaAtual === 0"
-    >
-      ← Anterior
-    </button>
+      <!-- Filtro por nome da loja -->
+      <div class="filter-group">
+        <label class="filter-label">Loja</label>
+        <input
+          class="filter-input"
+          type="text"
+          placeholder="Nome da loja..."
+          [(ngModel)]="filtro.nomeLoja"
+          (keyup.enter)="aplicarFiltros()"
+        />
+      </div>
 
-    @for (
-      page of [].constructor(totalPaginas);
-      track $index
-    ) {
+      <!-- Filtro por loja (select) -->
+      <div class="filter-group">
+        <label class="filter-label">Selecionar loja</label>
+        <select class="filter-select" [(ngModel)]="filtroLoja" (change)="aplicarFiltros()">
+          <option [ngValue]="undefined">Todas as lojas</option>
+          @for (loja of lojas; track loja.id) {
+            <option [ngValue]="loja.id">{{ loja.nome }}</option>
+          }
+        </select>
+      </div>
 
-      <button
-        [class.active]="
-          paginaAtual === $index
-        "
-        (click)="buscar($index)"
-      >
-        {{ $index + 1 }}
+      <!-- Filtro sem estoque -->
+      <div class="filter-group">
+        <label class="filter-toggle">
+          <input type="checkbox" [(ngModel)]="filtro.semEstoque" (change)="aplicarFiltros()" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">Incluir sem estoque</span>
+        </label>
+      </div>
+
+      <!-- Botão aplicar -->
+      <button class="btn-apply-filters" (click)="aplicarFiltros()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        BUSCAR
       </button>
 
-    }
+      <button class="clear-filters" (click)="limparFiltros()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        LIMPAR FILTROS
+      </button>
+    </aside>
 
-    <button
-      (click)="buscar(paginaAtual + 1)"
-      [disabled]="
-        paginaAtual === totalPaginas - 1
-      "
-    >
-      Próxima →
-    </button>
+    <!-- PRODUCTS -->
+    <div class="products-area">
+
+      @if (loading) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Carregando produtos...</p>
+        </div>
+      }
+
+      @if (!loading && produtosFiltrados.length === 0) {
+        <div class="empty-state">
+          <!-- Ilustração: farmacêutico com lupa -->
+          <div class="empty-illustration">
+            <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Prateleira -->
+              <rect x="20" y="110" width="160" height="4" rx="2" fill="currentColor" opacity="0.1"/>
+              <rect x="30" y="120" width="140" height="4" rx="2" fill="currentColor" opacity="0.07"/>
+              <!-- Frascos na prateleira -->
+              <rect x="40" y="86" width="18" height="24" rx="4" stroke="currentColor" stroke-width="2" opacity="0.15"/>
+              <rect x="44" y="82" width="10" height="6" rx="2" fill="currentColor" opacity="0.1"/>
+              <rect x="70" y="78" width="16" height="32" rx="4" stroke="currentColor" stroke-width="2" opacity="0.15"/>
+              <rect x="73" y="74" width="10" height="6" rx="2" fill="currentColor" opacity="0.1"/>
+              <rect x="120" y="90" width="20" height="20" rx="6" stroke="currentColor" stroke-width="2" opacity="0.15"/>
+              <rect x="148" y="82" width="14" height="28" rx="4" stroke="currentColor" stroke-width="2" opacity="0.15"/>
+              <!-- Lupa grande central -->
+              <circle cx="100" cy="52" r="28" stroke="currentColor" stroke-width="3" opacity="0.18"/>
+              <line x1="120" y1="72" x2="138" y2="90" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.18"/>
+              <!-- X dentro da lupa -->
+              <line x1="90" y1="42" x2="110" y2="62" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.13"/>
+              <line x1="110" y1="42" x2="90" y2="62" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.13"/>
+              <!-- Pílulas caindo -->
+              <ellipse cx="55" cy="56" rx="6" ry="3" transform="rotate(-30 55 56)" stroke="currentColor" stroke-width="1.5" opacity="0.12"/>
+              <ellipse cx="145" cy="48" rx="5" ry="3" transform="rotate(20 145 48)" stroke="currentColor" stroke-width="1.5" opacity="0.12"/>
+              <!-- Pontos decorativos -->
+              <circle cx="30" cy="40" r="2" fill="currentColor" opacity="0.08"/>
+              <circle cx="170" cy="35" r="2" fill="currentColor" opacity="0.08"/>
+              <circle cx="25" cy="70" r="1.5" fill="currentColor" opacity="0.06"/>
+              <circle cx="175" cy="65" r="1.5" fill="currentColor" opacity="0.06"/>
+            </svg>
+          </div>
+          <h3>Nenhum produto encontrado</h3>
+          <p>Tente buscar com outro termo ou ajuste os filtros</p>
+        </div>
+      }
+
+      <div class="products-grid">
+        @for (item of produtosFiltrados; track item.id) {
+          <div class="product-card">
+            @if (item.percentualDesconto > 0) {
+              <span class="badge-discount">-{{ item.percentualDesconto }}%</span>
+            }
+            <div class="card-img">
+              <img [src]="getImagem(item)" [alt]="item.nomeProduto" loading="lazy" />
+            </div>
+            <h3 class="card-name">{{ item.nomeProduto }}</h3>
+            <span class="card-store">{{ item.nomeLoja }}</span>
+            <span class="card-delivery">{{ item.Entregar || 'ENTREGA IMEDIATA' }}</span>
+            <div class="card-price">
+              @if (item.percentualDesconto > 0) {
+                <span class="price-old">{{ item.preco | currency:'BRL' }}</span>
+              }
+              <span class="price-current">{{ (item.valorFinal || item.preco) | currency:'BRL' }}</span>
+              <span class="card-stock">{{ item.quantidade }} em estoque</span>
+            </div>
+            <button class="card-add" (click)="adicionar(item, $event)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- PAGINATION -->
+      @if (totalPaginas > 1) {
+        <div class="pagination">
+          <button class="page-arrow" (click)="buscar(paginaAtual - 1)" [disabled]="paginaAtual === 0">
+            ← ANTERIOR
+          </button>
+
+          <div class="page-numbers">
+            @for (page of getPaginas(); track page) {
+              @if (page === -1) {
+                <span class="dots">...</span>
+              } @else {
+                <button class="page-num" [class.active]="paginaAtual === page" (click)="buscar(page)">
+                  {{ (page + 1) | number:'2.0-0' }}
+                </button>
+              }
+            }
+          </div>
+
+          <button class="page-arrow" (click)="buscar(paginaAtual + 1)" [disabled]="paginaAtual === totalPaginas - 1">
+            PRÓXIMO →
+          </button>
+        </div>
+      }
+
+    </div>
 
   </div>
 
-}
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <i data-lucide="plus" class="footer-icon-plus"></i>
+          <span>PROMOFARMA</span>
+        </div>
+        <p>Sua farmácia digital de confiança. Entregamos saúde e bem-estar diretamente na sua porta com a agilidade e exclusividade que você merece.</p>
+        <div class="footer-social">
+          <i data-lucide="globe"></i>
+          <i data-lucide="share-2"></i>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>INSTITUCIONAL</h4>
+        <ul>
+          <li><a href="#">Sobre Nós</a></li>
+          <li><a href="#">Nossas Lojas</a></li>
+          <li><a href="#">Política de Privacidade</a></li>
+          <li><a href="#">Termos de Uso</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>AJUDA</h4>
+        <ul>
+          <li><a href="#">Meus Pedidos</a></li>
+          <li><a href="#">Trocas e Devoluções</a></li>
+          <li><a href="#">Dúvidas Frequentes</a></li>
+          <li><a href="#">Cartão PromoFarma</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>BAIXE NOSSO APP</h4>
+        <div class="app-badges">
+          <button class="app-badge">
+            <i data-lucide="play"></i>
+            <div><small>Disponível no</small><strong>Google Play</strong></div>
+          </button>
+          <button class="app-badge">
+            <i data-lucide="smartphone"></i>
+            <div><small>Baixar na</small><strong>App Store</strong></div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 PromoFarma. Todos os direitos reservados. Sua saúde, nossa prioridade.</p>
+    </div>
+  </div>
+</footer>

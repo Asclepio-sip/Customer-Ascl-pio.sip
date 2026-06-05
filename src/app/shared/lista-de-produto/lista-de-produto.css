@@ -2,7 +2,7 @@
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 18px;
-  color: #1f1f1f;
+  color: var(--on-surface, #1f1f1f);
 }
 
 .carousel-wrapper {
@@ -27,17 +27,23 @@
   gap: 12px;
 }
 
-/* CARD MENOR */
+/* CARD */
 .product-card {
   position: relative;
   min-width: 185px;
   width: 185px;
-  background: #fff;
-  border: 1px solid #ededed;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--card-border, #ededed);
   border-radius: 16px;
   padding: 12px;
   display: flex;
   flex-direction: column;
+  box-shadow: var(--card-shadow, none);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.product-card:hover {
+  border-color: var(--primary, #dc2626);
 }
 
 /* IMAGEM */
@@ -46,6 +52,8 @@
   justify-content: center;
   align-items: center;
   height: 125px;
+  background: var(--surface-container, #f8f8f8);
+  border-radius: 12px;
 }
 
 .image-container img {
@@ -58,7 +66,7 @@
 .product-name {
   font-size: 13px;
   font-weight: 600;
-  color: #222;
+  color: var(--on-surface, #222);
   line-height: 1.35;
   margin-top: 8px;
 
@@ -75,7 +83,7 @@
 .variation {
   margin-top: 4px;
   font-size: 11px;
-  color: #777;
+  color: var(--on-surface-variant, #777);
 }
 
 /* BADGE PROMOÇÃO */
@@ -83,8 +91,8 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background: #d5002d;
-  color: white;
+  background: var(--primary, #d5002d);
+  color: var(--on-primary, white);
   font-size: 11px;
   font-weight: 700;
   border-radius: 999px;
@@ -99,13 +107,13 @@
 }
 
 .old-price {
-  color: #9a9a9a;
+  color: var(--on-surface-variant, #9a9a9a);
   text-decoration: line-through;
   font-size: 12px;
 }
 
 .current-price {
-  color: #111;
+  color: var(--on-surface, #111);
   font-size: 20px;
   font-weight: 700;
 }
@@ -113,7 +121,7 @@
 /* ESTOQUE */
 .stock {
   font-size: 11px;
-  color: #777;
+  color: var(--on-surface-variant, #777);
   margin-top: 3px;
 }
 
@@ -129,8 +137,8 @@
   border: none;
   border-radius: 50%;
 
-  background: #d5002d;
-  color: white;
+  background: var(--primary, #d5002d);
+  color: var(--on-primary, white);
 
   font-size: 24px;
   cursor: pointer;
@@ -138,33 +146,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s;
 }
 
 .add-btn:hover {
-  background: #b80026;
+  transform: scale(1.1);
+  opacity: 0.9;
 }
 
 /* SETAS */
 .carousel-btn {
   border: none;
-  background: white;
+  background: var(--card-bg, white);
   width: 38px;
   height: 38px;
   border-radius: 50%;
   cursor: pointer;
   font-size: 18px;
-  color: #444;
-  border: 1px solid #ececec;
+  color: var(--on-surface, #444);
+  border: 1px solid var(--outline-variant, #ececec);
   flex-shrink: 0;
+  transition: background 0.2s;
 }
 
 .carousel-btn:hover {
-  background: #f7f7f7;
+  background: var(--surface-container, #f7f7f7);
 }
+
 .store-name {
   display: block;
   font-size: 12px;
-  color: #666;
+  color: var(--on-surface-variant, #666);
   margin-top: -4px;
   margin-bottom: 8px;
   font-weight: 500;
