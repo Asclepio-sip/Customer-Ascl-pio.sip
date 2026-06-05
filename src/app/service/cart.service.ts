@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Estoque } from './estoque.service';
 
 
@@ -39,6 +39,9 @@ private tipoEntregaAtual: string | null = null;
 
 private cartErrorSubject = new BehaviorSubject<string | null>(null);
 cartError$ = this.cartErrorSubject.asObservable();
+
+private cartBumpSubject = new Subject<void>();
+cartBump$ = this.cartBumpSubject.asObservable();
 
 add(produto: Estoque) {
 
@@ -98,6 +101,7 @@ add(produto: Estoque) {
   }
 
   this.cartSubject.next([...this.items]);
+  this.cartBumpSubject.next();
 }
 remove(produtoId: number, lojaId: number) {
 

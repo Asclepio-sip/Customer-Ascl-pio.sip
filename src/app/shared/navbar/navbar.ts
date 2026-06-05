@@ -55,6 +55,7 @@ implements OnInit, AfterViewChecked {
   closing = false;
   showMenu = false;
   showCart = false;
+  badgeBump = false;
 
   activeCategory = '';
 
@@ -70,6 +71,8 @@ implements OnInit, AfterViewChecked {
 
   mostrarDropdown =
     false;
+
+  isDarkMode = false;
 
   constructor(
     public authService:
@@ -109,28 +112,41 @@ implements OnInit, AfterViewChecked {
 
       }, 4000);
     });
+
+    this.cartService.cartBump$.subscribe(() => {
+      this.badgeBump = false;
+      setTimeout(() => this.badgeBump = true, 10);
+      setTimeout(() => this.badgeBump = false, 600);
+    });
   }
 
   ngOnInit() {
     this.initIcons();
+    const saved = localStorage.getItem('promofarma-theme');
+    this.isDarkMode = saved === 'dark';
+    this.applyTheme();
   }
 
   ngAfterViewChecked() {
     this.initIcons();
   }
 
+  private iconsInitialized = false;
+
   initIcons() {
-
-    if (
-      typeof lucide
-      !== 'undefined'
-    ) {
-
+    if (typeof lucide !== 'undefined' && !this.iconsInitialized) {
       lucide.createIcons();
+      this.iconsInitialized = true;
     }
   }
 
-  
+  refreshIcons() {
+    if (typeof lucide !== 'undefined') {
+      setTimeout(() => lucide.createIcons(), 0);
+    }
+  }
+
+
 
   buscarPreview() {
 
@@ -276,5 +292,16 @@ implements OnInit, AfterViewChecked {
     this.showCart = true;
   }
 
-  
+  toggleTheme() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('promofarma-theme', this.isDarkMode ? 'dark' : 'light');
+    this.applyTheme();
+    this.refreshIcons();
+  }
+
+  private applyTheme() {
+    document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
+  }
+
+
 }
